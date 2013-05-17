@@ -45,13 +45,13 @@
 		<table id="table2">
 		<tr>
 		<td>
-		<div id="subjectSort" onclick="sortBySubject(this.id)" style="cursor:pointer; width:55px; margin:auto;">Tantárgy</div>
+		<div id="subjectSort" onclick="sortBySubject(this.id)" style="cursor:pointer; width:55px; margin:auto;"><b>Tantárgy</b></div>
 		</td>
 		<td>
-		<div id="homeworkSort" onclick="sortByHomework(this.id)" style="cursor:pointer; width:30px; margin:auto;">Házi</div>
+		<div id="homeworkSort" onclick="sortByHomework(this.id)" style="cursor:pointer; width:30px; margin:auto;"><b>Házi</b></div>
 		</td>
 		<td>
-		<div width:40px; margin:auto;">Törlés</div>
+		<div width:40px; margin:auto;"></div>
 		</td>
 		</tr>
 		</table>
@@ -257,7 +257,7 @@
 					var tdTags = document.getElementsByTagName( "td" );
 					var subjectValues = new Array();
 					var homeworkValuesInDefaultSequence = new Array();
-					var sortId = - 1;
+					var sortId = -1;
 					
 					for ( var i = 8; i < tdTags.length - 1; i++ )
 					{
