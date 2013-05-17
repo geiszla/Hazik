@@ -62,11 +62,10 @@
 				
 				var addClick = function()
 				{
-					var addNotEnd = true;
-					
+					var addWhileNotEnd = true;
 					var addWhileId = 0;
 
-					while ( addNotEnd === true )
+					while ( addWhileNotEnd === true )
 					{
 						addWhileId = addWhileId + 1;
 						
@@ -75,19 +74,19 @@
 							if ( document.getElementById( "text1" ).value.length === 0 && document.getElementById( "text2" ).value.length === 0 )
 							{
 								alert( "Nem írtál be semmit!" );
-								addNotEnd = false;
+								addWhileNotEnd = false;
 							}
 							
 							else if ( document.getElementById( "text1" ).value.length === 0 )
 							{
 								alert( "Nem írtál be tantárgyat!" );
-								addNotEnd = false;
+								addWhileNotEnd = false;
 							}
 							
 							else if ( document.getElementById( "text2" ).value.length === 0 )
 							{
 								alert( "Nem írtál be házit!" );
-								addNotEnd = false;
+								addWhileNotEnd = false;
 							}
 								
 							else
@@ -116,13 +115,12 @@
 								document.getElementById( "homework" ).id += addWhileId;
 								
 								subjectValue[addWhileId] = document.getElementById( "text1" ).value;
-
 								homeworkValue[addWhileId] = document.getElementById( "text2" ).value;
 								
 								document.getElementById( "text1" ).value = "";
 								document.getElementById( "text2" ).value = "";
 								
-								addNotEnd = false;
+								addWhileNotEnd = false;
 							}
 						}
 					}
@@ -134,196 +132,195 @@
 					
 					if ( deleteQuestion === true )
 					{
-						var parentElement = document.getElementById( clickedId ).parentNode.parentNode;
-						parentElement.parentNode.removeChild( parentElement );
+						var deletableElement = document.getElementById( clickedId ).parentNode.parentNode;
+						deletableElement.parentNode.removeChild( deletableElement );
 						
-						var trTagsArray = document.getElementsByTagName( "tr" );
+						var trTags = document.getElementsByTagName( "tr" );
+						var deleteId = 0;
 						
-						var notEnd = true;
-						var whileId = 0;
-						
-						for (var i = 0; i < trTagsArray.length - 3; i++ )
+						for (var i = 0; i < trTags.length - 3; i++ )
 						{
-							whileId = whileId + 1;
-							whileIdPlusOne = whileId + 1;
+							deleteId = deleteId + 1;
 							
-							if( document.getElementById( "deleteButton" + whileId ) === null )
+							if( document.getElementById( "deleteButton" + deleteId ) === null )
 							{
-								document.getElementById( "deleteButton" + whileIdPlusOne ).id = "deleteButton" + whileId;
-								document.getElementById( "subject" + whileIdPlusOne ).id = "subject" + whileId;
-								document.getElementById( "homework" + whileIdPlusOne ).id = "homework" + whileId;
-							}
-							
-							else
-							{
-								notEnd = false;
+								document.getElementById( "deleteButton" + ( deleteId + 1) ).id = "deleteButton" + deleteId;
+								document.getElementById( "subject" + ( deleteId + 1) ).id = "subject" + deleteId;
+								document.getElementById( "homework" + ( deleteId + 1) ).id = "homework" + deleteId;
+								
+								subjectValue[deleteId] = subjectValue[deleteId + 1 ];
+								homeworkValue[deleteId] = homeworkValue[deleteId + 1 ];
 							}
 						}
 					}
-					
 				};
+				
+				var editFunction = function( columnId, columnName, clickedId )
+				{
+					var editId = document.getElementById( clickedId ).id.replace( columnId, "" );
+					window.editId = editId;
+								
+					var deletableElement = document.getElementById( clickedId );
+								
+					var addTextbox = document.createElement( "td" );
+					addTextbox.id = columnId + editId;
+					addTextbox.innerHTML +=
+							[
+								'<input type="text" id="textHomework" onblur="saveClick(this.id)"/>'
+							].join( "" );
+					document.body.appendChild( addTextbox );
+					document.getElementById( "textHomework" ).id = "text" + columnName;
 					
+					if( columnId === "subject" )
+					{
+						document.getElementById( "text" + columnName ).value = subjectValue[ editId ];
+					}
+					
+					else
+					{
+						document.getElementById( "text" + columnName ).value = homeworkValue[ editId ];
+					}
+
+					deletableElement.parentNode.replaceChild( addTextbox, deletableElement );
+
+					document.getElementById( "text" + columnName ).focus();
+				};
+				
 				var editClick = function( clickedId )
 				{
-						if ( isNaN( document.getElementById( clickedId ).id.replace( "subject", "" ) ) === true )
-						{
-							var idNumber = document.getElementById( clickedId ).id.replace( "homework", "" );
-							window.idNumber = idNumber;
-							
-							var childElement2 = document.getElementById( clickedId );
-							
-							var homeworkInput = document.createElement( "td" );
-							homeworkInput.id = "homework" + idNumber;
-							homeworkInput.innerHTML +=
-									[
-									'<input type="text" id="textHomework" onblur="saveClick(this.id)"/>'
-									].join( "" );
-							document.body.appendChild(homeworkInput);	
-							document.getElementById( "textHomework" ).value = homeworkValue[ idNumber ];
-							
-							childElement2.parentNode.replaceChild( homeworkInput, childElement2 );
-							
-							document.getElementById( "textHomework" ).focus();
-						}
+					if ( isNaN( document.getElementById( clickedId ).id.replace( "subject", "" ) ) === true )
+					{
+						editFunction( "homework", "Homework", clickedId );
+					}
 						
-						else
-						{
-							idNumber = document.getElementById( clickedId ).id.replace( "subject", "" );
-							window.idNumber = idNumber;
-							
-							var childElement = document.getElementById( clickedId );
-							
-							var subjectInput = document.createElement( "td" );
-							subjectInput.id = "subject" + idNumber;
-							subjectInput.innerHTML +=
-									[
-									'<input type="text" id="textSubject" onblur="saveClick(this.id)"/>'
-									].join( "" );
-							document.body.appendChild(subjectInput);
-							document.getElementById( "textSubject" ).value = subjectValue[ idNumber ];
-							
-							childElement.parentNode.replaceChild( subjectInput, childElement );
-							
-							document.getElementById( "textSubject" ).focus();
-						}
+					else
+					{
+						editFunction( "subject", "Subject", clickedId );
+					}
+				};
+				
+				var saveFunction = function( columnId, columnName )
+				{
+					var deletableElement = document.getElementById( "text" + columnName ).parentNode;
+					
+					if ( columnId === "subject" )
+					{
+						subjectValue[ editId ] = document.getElementById( "textSubject" ).value;
+					}
+					
+					else
+					{
+						homeworkValue[ editId ] = document.getElementById( "textHomework" ).value;
+					}
+					
+					var addValue = document.createElement( "td" );
+					addValue.id = columnId + editId;
+					addValue.innerHTML +=
+							[
+								document.getElementById( "text" + columnName ).value
+							].join( "" );
+					document.body.appendChild(addValue);
+					deletableElement.parentNode.replaceChild( addValue, deletableElement );
+					
+					if ( columnId === "subject" )
+					{
+						var subjectOnclick = document.getElementById( "subject" + editId );
+						var onclickAttribute = document.createAttribute( "onclick" );
+						onclickAttribute.value = "editClick(this.id)";
+						subjectOnclick.setAttributeNode(onclickAttribute);
+					}
+					
+					else
+					{
+						var homeworkOnclick = document.getElementById( "homework" + editId );
+						onclickAttribute = document.createAttribute( "onclick" );
+						onclickAttribute.value = "editClick(this.id)";
+						homeworkOnclick.setAttributeNode(onclickAttribute);
+					}
 				};
 				
 				var saveClick = function()
 				{
 					if ( document.getElementById( "textSubject" ) === null )
 					{
-						var childElement2 = document.getElementById( "textHomework" ).parentNode;
-						
-						homeworkValue[ idNumber ] = document.getElementById( "textHomework" ).value;
-						window.homeworkValue = homeworkValue;
-						
-						var homeworkSave = document.createElement( "td" );
-						homeworkSave.id = "homework" + idNumber;
-						homeworkSave.innerHTML +=
-								[
-								document.getElementById( "textHomework" ).value
-								].join( "" );
-						document.body.appendChild(homeworkSave);
-						childElement2.parentNode.replaceChild( homeworkSave, childElement2 );
-						
-						var homeworkOnclick = document.getElementById( "homework" + idNumber );
-						var onclickAttribute = document.createAttribute( "onclick" );
-						
-						onclickAttribute.value = "editClick(this.id)";
-						homeworkOnclick.setAttributeNode(onclickAttribute);
+						saveFunction( "homework", "Homework" );
 					}
 					
 					else
 					{
-						var childElement = document.getElementById( "textSubject" ).parentNode;
-						
-						subjectValue[ idNumber ] = document.getElementById( "textSubject" ).value;
-						window.subjectValue = subjectValue;
-						
-						var subjectSave = document.createElement( "td" );
-						subjectSave.id = "subject" + idNumber;
-						subjectSave.innerHTML +=
-								[
-								document.getElementById( "textSubject" ).value
-								].join( "" );
-						document.body.appendChild(subjectSave);
-						childElement.parentNode.replaceChild( subjectSave, childElement );
-						
-						var subjectOnclick = document.getElementById( "subject" + idNumber );
-						onclickAttribute = document.createAttribute( "onclick" );
-						
-						onclickAttribute.value = "editClick(this.id)";
-						subjectOnclick.setAttributeNode(onclickAttribute);
+						saveFunction( "subject", "Subject" );
 					}
 				};
 				
 				var sortBySubject = function()
 				{
-					var getTd = document.getElementsByTagName( "td" );
-					var subjectTdArray = new Array();
-					var getHomeworkBySubject = new Array();
-					var idNumber = new Array();
-					var subjectTdArrayId = -1;
+					var tdTags = document.getElementsByTagName( "td" );
+					var subjectValues = new Array();
+					var homeworkValuesInDefaultSequence = new Array();
+					var sortId = - 1;
 					
-					for ( var i = 8; i < getTd.length - 1; i++ )
+					for ( var i = 8; i < tdTags.length - 1; i++ )
 					{
 						if ( i % 3 === 2 )
 						{
-							subjectTdArrayId = subjectTdArrayId + 1;
-							subjectTdArray[ subjectTdArrayId ] = getTd[ i ].innerHTML;
+							sortId = sortId + 1;
+							subjectValues[ sortId ] = tdTags[ i ].innerHTML;
 						}
 						
 						else if ( i % 3 === 0 )
 						{
-							getHomeworkBySubject[ subjectTdArrayId ] = getTd[ i ].innerHTML;
+							homeworkValuesInDefaultSequence[ sortId ] = tdTags[ i ].innerHTML;
 						}
 					}
 					
-					var getHomework = new Array();
+					var subjectValuesInDefaultSequence = new Array();
 					
-					for ( l = 0; l < subjectTdArray.length; l++ )
+					for ( l = 0; l < subjectValues.length; l++ )
 					{
-						getHomework[ l ] = subjectTdArray [ l ];
+						subjectValuesInDefaultSequence[ l ] = subjectValues [ l ];
 					}
 					
-					subjectTdArray.sort();
+					subjectValues.sort();
 
-					for ( var j = 0; j < subjectTdArray.length ; j++ )
+					for ( var j = 0; j < subjectValues.length ; j++ )
 					{
-						document.getElementById( "subject" + ( j + 1 ) ).innerHTML = subjectTdArray[ j ];
+						document.getElementById( "subject" + ( j + 1 ) ).innerHTML = subjectValues[ j ];
 					}
 					
-					getTd = document.getElementsByTagName( "td" );
-					var notEnd = true;
-					var whileId = -1;
-					var whileId2 = 0;
+					tdTags = document.getElementsByTagName( "td" );
+					var sortWhileNotEnd = true;
+					var sortWhileId = -1;
+					var sortWhileId2 = 0;
 					
-					for ( var k = 8; k < getTd.length; k++ )
+					for ( var k = 8; k < tdTags.length; k++ )
 					{
-						notEnd = true;
+						sortWhileNotEnd = true;
 						
-						while ( notEnd === true )
+						while ( sortWhileNotEnd === true )
 						{
 							if ( k % 3 === 2 )
 							{
-								whileId = whileId + 1;
+								sortWhileId = sortWhileId + 1;
 								
-								if ( getTd[ k ].innerHTML === getHomework[ whileId ] )
+								if ( tdTags[ k ].innerHTML === subjectValuesInDefaultSequence[ sortWhileId ] )
 								{
-									whileId2 = whileId2 + 1;
+									sortWhileId2 = sortWhileId2 + 1;
 									
-									document.getElementById( "homework" + ( whileId2 ) ).innerHTML = getHomeworkBySubject[ whileId ];
+									document.getElementById( "homework" + ( sortWhileId2 ) ).innerHTML = homeworkValuesInDefaultSequence[ sortWhileId ];
 									
-									getHomework[ whileId ] = null;
+									subjectValuesInDefaultSequence[ sortWhileId ] = null;
 
-									whileId = -1;
-									notEnd = false;
+									sortWhileId = -1;
+									sortWhileNotEnd = false;
+									
+									subjectValue[sortWhileId2] = document.getElementById( "homework" + ( sortWhileId2 ) ).innerHTML;
+									homeworkValue[sortWhileId2] = document.getElementById( "subject" + ( sortWhileId2 ) ).innerHTML;
 								}
 							}
 							
 							else
 							{
-								notEnd = false;
+								sortWhileNotEnd = false;
 							}
 						}
 					}
