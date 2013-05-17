@@ -22,33 +22,60 @@
 		<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
 	</head>
 	
-	<body>
+	<body onload="onloadFunction()">
 		<table id="table1">
 		<tr>
-		<td>Tantárgy</td>	<td>Házi</td>
+		<td>Tantárgy</td>	<td>Házi</td>	<td>Határidő</td>
 		</tr>
 		<tr>
-		<td><input id="text1" type="text" autofocus="on" /></td>	<td><input id="text2" type="text" /></td>	<td><input id="addButton" value="Hozzáadás" type="submit" onclick="addClick()" /></td>
+		<td><input id="text1" type="text" /></td>	<td><input id="text2" type="text" /></td>	<td><input id="addDeadline" type="date" /></td>	<td><input id="addButton" value="Hozzáadás" type="submit" onclick="addClick()" /></td>
 		</tr>
 		</table>
 		
 		<table id="table2">
 		<tr>
 		<td>
-		<div id="subjectSort" onclick="sortBySubject(this.id)" style="cursor:pointer; width:55px; margin:auto;"><b>Tantárgy</b></div>
+		<div id="subjectSort" onclick="sortBySubject(this.id)" style="cursor:pointer; width:61px; margin:auto;"><b>Tantárgy</b></div>
 		</td>
 		<td>
 		<div id="homeworkSort" onclick="sortByHomework(this.id)" style="cursor:pointer; width:30px; margin:auto;"><b>Házi</b></div>
 		</td>
 		<td>
-		<div style="width:40px; margin:auto;"></div>
+		<div id="deadlineHead" onclick="sortByDeadline(this.id)" style="cursor:pointer; width:60px; margin:auto;"><b>Határidő</b></div>
 		</td>
 		</tr>
 		</table>
 		
 		<script>
-				var subjectValue = new Array();
-				var homeworkValue = new Array();
+				var makeTwoDigit = function(input)
+				{
+					if( input < 10 )
+					{
+						return ( "0" + input );
+					}
+					
+					else
+					{
+						return input;
+					}
+				}
+					
+				var onloadFunction = function()
+				{
+					var currentDate = new Date();
+					 
+					var year = currentDate.getFullYear();
+					var month = makeTwoDigit( currentDate.getMonth() + 1 );
+					var day = makeTwoDigit( currentDate.getDate() );
+					 
+					var currentDate = year + "-" + month + "-" + day;
+					window.currentDate = currentDate;
+					document.getElementById( "addDeadline" ).value = currentDate;
+				};
+				
+				var subjectValue = [];
+				var homeworkValue = [];
+				var deadlineValue = [];
 				
 				var addClick = function()
 				{
@@ -92,6 +119,9 @@
 									'<td id="homework" onclick ="editClick(this.id)">',
 									document.getElementById( "text2" ).value,
 									'</td>',
+									'<td id="deadline" onclick ="editClick(this.id)">',
+									document.getElementById( "addDeadline" ).value.replace( /\-/g, "." ) + ".",
+									'</td>',
 									'<td>',
 									'<input type="button" value="Törlés" onclick="deleteClick(this.id)" id="deleteButton" />',
 									'</td>',
@@ -103,12 +133,15 @@
 								document.getElementById( "deleteButton" ).id += addWhileId;
 								document.getElementById( "subject" ).id += addWhileId;
 								document.getElementById( "homework" ).id += addWhileId;
+								document.getElementById( "deadline" ).id += addWhileId;
 								
 								subjectValue[addWhileId] = document.getElementById( "text1" ).value;
 								homeworkValue[addWhileId] = document.getElementById( "text2" ).value;
+								deadlineValue[addWhileId] = document.getElementById( "addDeadline" ).value.replace( /\-/g, "." ) + ".";
 								
 								document.getElementById( "text1" ).value = "";
 								document.getElementById( "text2" ).value = "";
+								document.getElementById( "addDeadline" ).value = currentDate;
 								
 								addWhileNotEnd = false;
 							}
@@ -161,14 +194,19 @@
 					document.body.appendChild( addTextbox );
 					document.getElementById( "textHomework" ).id = "text" + columnName;
 					
-					if( columnId === "subject" )
+					if ( columnId === "subject" )
 					{
 						document.getElementById( "text" + columnName ).value = subjectValue[ editId ];
 					}
 					
-					else
+					else if ( columnId === "homework" )
 					{
 						document.getElementById( "text" + columnName ).value = homeworkValue[ editId ];
+					}
+					
+					else
+					{
+						document.getElementById( "text" + columnName ).value = deadlineValue[ editId ];
 					}
 
 					deletableElement.parentNode.replaceChild( addTextbox, deletableElement );
@@ -178,14 +216,21 @@
 				
 				var editClick = function( clickedId )
 				{
-					if ( isNaN( document.getElementById( clickedId ).id.replace( "subject", "" ) ) === true )
+					var clickId = document.getElementById( clickedId ).id;
+					
+					if ( isNaN( clickId.replace( "subject", "" ) ) === false )
+					{
+						editFunction( "subject", "Subject", clickedId );
+					}
+						
+					else if ( isNaN( clickId.replace( "homework", "" ) ) === false )
 					{
 						editFunction( "homework", "Homework", clickedId );
 					}
-						
+					
 					else
 					{
-						editFunction( "subject", "Subject", clickedId );
+						editFunction( "deadline", "Deadline", clickedId );
 					}
 				};
 				
@@ -198,9 +243,14 @@
 						subjectValue[ editId ] = document.getElementById( "textSubject" ).value;
 					}
 					
-					else
+					else if ( columnId === "homework" )
 					{
 						homeworkValue[ editId ] = document.getElementById( "textHomework" ).value;
+					}
+					
+					else
+					{
+						deadlineValue[ editId ] = document.getElementById( "textDeadline" ).value;
 					}
 					
 					var addValue = document.createElement( "td" );
@@ -220,25 +270,38 @@
 						subjectOnclick.setAttributeNode(onclickAttribute);
 					}
 					
-					else
+					else if ( columnId === "homework" )
 					{
 						var homeworkOnclick = document.getElementById( "homework" + editId );
 						onclickAttribute = document.createAttribute( "onclick" );
 						onclickAttribute.value = "editClick(this.id)";
 						homeworkOnclick.setAttributeNode(onclickAttribute);
 					}
+					
+					else
+					{
+						var deadlineOnclick = document.getElementById( "deadline" + editId );
+						onclickAttribute = document.createAttribute( "onclick" );
+						onclickAttribute.value = "editClick(this.id)";
+						deadlineOnclick.setAttributeNode(onclickAttribute);
+					}
 				};
 				
 				var saveClick = function()
 				{
-					if ( document.getElementById( "textSubject" ) === null )
+					if ( document.getElementById( "textSubject" ) === null && document.getElementById( "textDeadline" ) === null )
 					{
 						saveFunction( "homework", "Homework" );
 					}
 					
-					else
+					else if ( document.getElementById( "textDeadline" ) === null )
 					{
 						saveFunction( "subject", "Subject" );
+					}
+					
+					else
+					{
+						saveFunction( "deadline", "Deadline" );
 					}
 				};
 				
@@ -251,7 +314,7 @@
 					var sortSubjectId = -1;
 					var sortHomeworkId = -1;
 					
-					for ( var i = 8; i < tdTags.length - 1; i++ )
+					for ( var i = 10; i < tdTags.length - 1; i++ )
 					{
 						if ( i % 3 === tdSortByNumber1 )
 						{
@@ -282,7 +345,7 @@
 						document.getElementById( sortByColumnName + ( j + 1 ) ).innerHTML = subjectValues[ j ];
 					}
 					
-					for ( var k = 8; k < tdTags.length; k++ )
+					for ( var k = 10; k < tdTags.length; k++ )
 					{
 						sortWhileNotEnd = true;
 					}
@@ -297,7 +360,7 @@
 					var sortWhileId = -1;
 					var sortWhileId2 = 0;
 					
-					for ( var k = 8; k < tdTags.length; k++ )
+					for ( var k = 10; k < tdTags.length; k++ )
 					{
 						sortWhileNotEnd = true;
 					
@@ -339,7 +402,7 @@
 					var sortWhileId = -1;
 					var sortWhileId2 = 0;
 					
-					for ( var k = 7; k < tdTags.length; k++ )
+					for ( var k = 10; k < tdTags.length; k++ )
 					{
 						sortWhileNotEnd = true;
 					
