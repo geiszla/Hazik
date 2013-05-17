@@ -56,6 +56,19 @@
 		</table>
 		
 		<script>
+				function makeTwoDigit( input )
+				{
+					if ( input < 10 )
+					{
+						return "0" + input;
+					}
+					
+					else
+					{
+						return input;
+					}
+				}
+				
 				function init()
 				{
 					var newDate = new Date();
@@ -77,25 +90,13 @@
 					trStyle.setAttributeNode( styleAttribute );
 				}
 				
-				function makeTwoDigit( input )
-				{
-					if( input < 10 )
-					{
-						return ( "0" + input );
-					}
-					
-					else
-					{
-						return input;
-					}
-				}
-				
 				var valuesArray = [];
 				
 				function addClick()
 				{
 					var addWhileNotEnd = true;
 					var addWhileId = 0;
+					var homeworkTable = "";
 
 					while ( addWhileNotEnd === true )
 					{
@@ -124,7 +125,7 @@
 								
 							else
 							{
-								var homeworkTable = document.getElementById( "table2" );
+								homeworkTable = document.getElementById( "table2" );
 								homeworkTable.style = "border-width:5px;";
 								homeworkTable.innerHTML +=
 									[
@@ -172,7 +173,7 @@
 								valuesArray[ addWhileId ][ 3 ] = document.getElementById( "addDeadline" ).value;
 								valuesArray[ addWhileId ][ 5 ] = document.getElementById( "addPrior" ).value;
 								
-								for ( var i = 1; i < addWhileId; i++ )
+								for ( var i = 1; i <= addWhileId; i++ )
 								{
 									if ( valuesArray[ i ][ 4 ] === true )
 									{
@@ -378,8 +379,6 @@
 					}
 				}
 				
-				var abc = [ [ "A", "a" ], [ "Á", "á" ], [ "B", "b" ], [ "C", "c" ], [ "CS", "Cs", "cs" ], [ "D", "d" ], [ "DZ", "Dz", "dz" ], [ "DZS", "DZs", "DzS", "dZS", "dzS", "dZs", "Dzs", "dzs" ], [ "E", "e" ], [ "É", "é" ], [ "F", "f" ], [ "G", "g" ], [ "GY", "Gy", "gy" ], [ "H", "h" ], [ "I", "i" ], [ "Í", "í" ], [ "J", "j" ], [ "K", "k" ], [ "L", "l" ], [ "LY", "Ly", "ly" ], [ "M", "m" ], [ "N", "n" ], [ "NY", "Ny", "ny" ], [ "O", "o" ], [ "Ó", "ó" ], [ "Ö", "ö" ], [ "Ő", "ő" ], [ "P", "p" ], [ "Q", "q" ], [ "R", "r" ], [ "S", "s" ], [ "SZ", "Sz", "sz" ], [ "T", "t" ], [ "TY", "Ty", "ty" ], [ "U", "u" ], [ "Ú", "ú" ], [ "Ü", "ü" ], [ "Ű", "ű" ], [ "V", "v" ], [ "W", "w" ], [ "X", "x" ], [ "Y", "y" ], [ "Z", "z" ], [ "ZS", "Zs", "zs" ] ];
-				
 				function sortBySubject()
 				{
 					var sortArray = [];
@@ -389,6 +388,49 @@
 						sortArray[ i - 1 ] = valuesArray[ i ][ 1 ];
 					}
 					
+					sortFunction( sortArray );
+					
+					for ( var j = 1; j <= addWhileId; j++ )
+					{
+						valuesArray[ j ][ 1 ] = sortArray[ j - 1 ];
+					}
+					
+					for ( var k = 1; k <= addWhileId; k++ )
+					{
+						document.getElementById( "subject" + k ).innerHTML = sortArray[ k - 1 ];
+					}
+					
+					var changedIds = [];
+
+					for ( var l = 1; l <= addWhileId; l++ )
+					{
+						for ( var m = 0; m < sortArray.length; m++ )
+						{
+							if ( sortArray[ m ] === valuesArray[ l ][ 1 ] )
+							{
+								changedIds[ l ] = m;
+							}
+						}
+					}
+
+					for ( var n = 1; n < valuesArray[ 1 ].length; n++ )
+					{
+						var tempArray = [];
+						
+						for ( var o = 1; o <= addWhileId; o++ )
+						{
+							tempArray[ changedIds[ o ] ] = valuesArray[ o ][ n ];
+						}
+						
+						for ( var p = 1; p <= tempArray.length; n++ )
+						{
+							valuesArray[ p ][ n ] = tempArray[ p ];
+						}
+					}
+				}
+				
+				function sortFunction( sortArray )
+				{
 					var notEnd = true;
 					var whileId = 0;
 					var swapNumber = 0;
@@ -410,7 +452,7 @@
 							}
 						}
 
-						else if ( sortFunction( sortArray[ whileId ], sortArray[ whileId + 1 ] ) === "second" )
+						else if ( sortArray[ whileId ].localeCompare( sortArray[ whileId + 1 ] ) > 0 )
 						{
 							swapNumber++;
 							
@@ -423,80 +465,7 @@
 						
 						whileId++;
 					}
-				}
-				
-				function sortFunction( firstWord, secondWord )
-				{
-					var firstWordId = [];
-					var secondWordId = [];
-					
-					for ( var i = 0; i < firstWord.length; i++ )
-					{
-						
-						for ( var j = 0; j < abc.length; j++ )
-						{
-							
-							for ( var k = 0; k < abc[ j ].length; k++ )
-							{
-								if ( firstWord[ i ] == abc[ j ][ k ] )
-								{
-									firstWordId.push( j );
-								}
-							}
-						}
-					}
-					
-					for ( var i = 0; i < secondWord.length; i++ )
-					{
-						
-						for ( var j = 0; j < abc.length; j++ )
-						{
-							
-							for ( var k = 0; k < abc[ j ].length; k++ )
-							{
-								if ( secondWord[ i ] == abc[ j ][ k ] )
-								{
-									secondWordId.push( j );
-								}
-							}
-						}
-					}
-					
-					var isTrue = true;
-					var whileId = -1;
-					
-					while ( isTrue )
-					{
-						whileId++;
-						
-						if ( firstWordId[ whileId ] === undefined  )
-						{
-							return "first";
-							
-							isTrue = false;
-						}
-						
-						else if ( secondWordId[ whileId ] === undefined )
-						{
-							return "second";
-							
-							isTrue = false;
-						}
-						
-						else if ( firstWordId[ whileId ] < secondWordId[ whileId ] )
-						{
-							return "first";
-							
-							isTrue = false;
-						}
-						
-						else if ( firstWordId[ whileId ] > secondWordId[ whileId ] )
-						{
-							return "second";
-							
-							isTrue = false;
-						}
-					}
+				/*jslint browser: true, couch: false, devel: true, node: false, rhino: false, windows: false, passfail: false, ass: false, bitwise: false, closure: false, continue: false, debug: false, eqeq: false, es5: false, evil: false, forin: false, newcap: false, nomen: false, plusplus: true, regexp: false, unparam: false, sloppy: true, stupid: false, sub: false, todo: false, vars: true, white: true */
 				}
 		</script>
 		
