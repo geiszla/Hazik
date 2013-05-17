@@ -73,9 +73,7 @@
 					document.getElementById( "addDeadline" ).value = currentDate;
 				};
 				
-				var subjectValue = [];
-				var homeworkValue = [];
-				var deadlineValue = [];
+				var valuesArray = [];
 				
 				var addClick = function()
 				{
@@ -135,9 +133,11 @@
 								document.getElementById( "homework" ).id += addWhileId;
 								document.getElementById( "deadline" ).id += addWhileId;
 								
-								subjectValue[addWhileId] = document.getElementById( "text1" ).value;
-								homeworkValue[addWhileId] = document.getElementById( "text2" ).value;
-								deadlineValue[addWhileId] = document.getElementById( "addDeadline" ).value;
+								valuesArray[ addWhileId ] = [];
+								
+								valuesArray[ addWhileId ][ 1 ] = document.getElementById( "text1" ).value;
+								valuesArray[ addWhileId ][ 2 ] = document.getElementById( "text2" ).value;
+								valuesArray[ addWhileId ][ 3 ] = document.getElementById( "addDeadline" ).value;
 								
 								document.getElementById( "text1" ).value = "";
 								document.getElementById( "text2" ).value = "";
@@ -170,9 +170,11 @@
 								document.getElementById( "deleteButton" + ( deleteId + 1) ).id = "deleteButton" + deleteId;
 								document.getElementById( "subject" + ( deleteId + 1) ).id = "subject" + deleteId;
 								document.getElementById( "homework" + ( deleteId + 1) ).id = "homework" + deleteId;
+								document.getElementById( "deadline" + ( deleteId + 1) ).id = "deadline" + deleteId;
 								
-								subjectValue[deleteId] = subjectValue[deleteId + 1 ];
-								homeworkValue[deleteId] = homeworkValue[deleteId + 1 ];
+								valuesArray[deleteId][ 1 ] = valuesArray[deleteId + 1 ][ 1 ];
+								valuesArray[deleteId][ 2 ] = valuesArray[deleteId + 1 ][ 2 ];
+								valuesArray[deleteId][ 3 ] = valuesArray[deleteId + 1 ][ 3 ];
 							}
 						}
 					}
@@ -196,18 +198,18 @@
 					
 					if ( columnId === "subject" )
 					{
-						document.getElementById( "text" + columnName ).value = subjectValue[ editId ];
+						document.getElementById( "text" + columnName ).value = valuesArray[ editId ][ 1 ];
 					}
 					
 					else if ( columnId === "homework" )
 					{
-						document.getElementById( "text" + columnName ).value = homeworkValue[ editId ];
+						document.getElementById( "text" + columnName ).value = valuesArray[ editId ][ 2 ];
 					}
 					
 					else
 					{
 						document.getElementById( "text" + columnName ).type = "date";
-						document.getElementById( "text" + columnName ).value = deadlineValue[ editId ];
+						document.getElementById( "text" + columnName ).value = valuesArray[ editId ][ 3 ];
 					}
 
 					deletableElement.parentNode.replaceChild( addTextbox, deletableElement );
@@ -241,17 +243,17 @@
 					
 					if ( columnId === "subject" )
 					{
-						subjectValue[ editId ] = document.getElementById( "textSubject" ).value;
+						valuesArray[ editId ][ 1 ] = document.getElementById( "textSubject" ).value;
 					}
 					
 					else if ( columnId === "homework" )
 					{
-						homeworkValue[ editId ] = document.getElementById( "textHomework" ).value;
+						valuesArray[ editId ][ 2 ] = document.getElementById( "textHomework" ).value;
 					}
 					
 					else
 					{
-						deadlineValue[ editId ] = document.getElementById( "textDeadline" ).value;
+						valuesArray[ editId ][ 3 ] = document.getElementById( "textDeadline" ).value;
 					}
 					
 					var addValue = document.createElement( "td" );
@@ -282,6 +284,7 @@
 					else
 					{
 						document.getElementById( columnId + editId ).innerHTML = document.getElementById( columnId + editId ).innerHTML.replace( /\-/g, "." ) + ".";
+						
 						var deadlineOnclick = document.getElementById( "deadline" + editId );
 						onclickAttribute = document.createAttribute( "onclick" );
 						onclickAttribute.value = "editClick(this.id)";
