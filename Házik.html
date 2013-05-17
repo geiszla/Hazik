@@ -1,0 +1,234 @@
+<html>
+
+	<head>
+		<style>
+			#table1
+			{
+				width:413px;
+				border-style:solid;
+				text-align:center;
+				margin:10px auto 25px auto;
+			}
+			
+			#table2
+			{
+				table-layout:fixed;
+				width:800px;
+				text-align:center;
+				margin:10px auto 0px auto;
+			}
+		</style>
+		
+		<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+	</head>
+	
+	<body>
+		<table id="table1">
+		<tr>
+		<td>Tantárgy</td>
+		<td>Házi</td>
+		</tr>
+		<tr>
+		<td>
+		<input id="text1" type="text" />
+		</td>
+		<td>
+		<input id="text2" type="text" />
+		</td>
+		<td>
+		<input id="addButton" value="Hozzáadás" type="submit" onclick="addClick()" 
+		/>
+		</td>
+		</tr>
+		</table>
+		
+		<table id="table2">
+		<tr>
+		<td>Tantárgy</td>
+		<td>Házi</td>
+		<td>Törlés</td>
+		</tr>
+		</table>
+		
+		<script>
+				var subjectValue = new Array();
+				var homeworkValue = new Array();
+				
+				var addClick = function()
+				{
+					var addNotEnd = true;
+					
+					var addWhileId = 0;
+
+					while ( addNotEnd === true )
+					{
+						addWhileId = addWhileId + 1;
+						
+						if ( document.getElementById( "deleteButton" + addWhileId ) === null )
+						{
+							if ( document.getElementById( "text1" ).value.length === 0 && document.getElementById( "text2" ).value.length === 0 )
+							{
+								alert( "Nem írtál be semmit!" );
+								addNotEnd = false;
+							}
+							
+							else if ( document.getElementById( "text1" ).value.length === 0 )
+							{
+								alert( "Nem írtál be tantárgyat!" );
+								addNotEnd = false;
+							}
+							
+							else if ( document.getElementById( "text2" ).value.length === 0 )
+							{
+								alert( "Nem írtál be házit!" );
+								addNotEnd = false;
+							}
+								
+							else
+							{
+								var homeworkTable = document.getElementById( "table2" );
+								homeworkTable.style = "border-width:5px;";
+								homeworkTable.innerHTML +=
+									[
+									'<tr id="tr">',
+									'<td id="subject" onclick ="editClick(this.id)">',
+									document.getElementById( "text1" ).value,
+									'</td>',
+									'<td id="homework" onclick ="editClick(this.id)">',
+									document.getElementById( "text2" ).value,
+									'</td>',
+									'<td>',
+									'<input type="button" value="Törlés" onclick="deleteClick(this.id)" id="deleteButton" />',
+									'</td>',
+									'</tr>'
+									].join( "" );
+								document.body.appendChild(homeworkTable);
+								
+								document.getElementById( "tr" ).id += addWhileId;
+								document.getElementById( "deleteButton" ).id += addWhileId;
+								document.getElementById( "subject" ).id += addWhileId;
+								document.getElementById( "homework" ).id += addWhileId;
+								
+								subjectValue[addWhileId] = document.getElementById( "text1" ).value;
+
+								homeworkValue[addWhileId] = document.getElementById( "text2" ).value;
+								
+								document.getElementById( "text1" ).value = "";
+								document.getElementById( "text2" ).value = "";
+								
+								addNotEnd = false;
+							}
+						}
+					}
+				};
+				
+				var deleteClick = function( clickedId )
+				{
+					var deleteQuestion = confirm( "Biztos, hogy törölni akarod?" );
+					
+					if ( deleteQuestion === true )
+					{
+						var parentElement = document.getElementById( clickedId ).parentNode.parentNode;
+						parentElement.parentNode.removeChild( parentElement );
+					}
+					
+				};
+					
+				var editClick = function( clickedId )
+				{
+						if ( isNaN( document.getElementById( clickedId ).id.replace( "subject", "" ) ) === true )
+						{
+							var idNumber = document.getElementById( clickedId ).id.replace( "homework", "" );
+							window.idNumber = idNumber;
+							
+							var childElement2 = document.getElementById( clickedId );
+							
+							var homeworkInput = document.createElement( "td" );
+							homeworkInput.id = "homework" + idNumber;
+							homeworkInput.innerHTML +=
+									[
+									'<input type="text" id="textHomework" onblur="saveClick(this.id)"/>'
+									].join( "" );
+							document.body.appendChild(homeworkInput);	
+							document.getElementById( "textHomework" ).value = homeworkValue[ idNumber ];
+							
+							childElement2.parentNode.replaceChild( homeworkInput, childElement2 );
+							
+							document.getElementById( "textHomework" ).focus();
+						}
+						
+						else
+						{
+							idNumber = document.getElementById( clickedId ).id.replace( "subject", "" );
+							window.idNumber = idNumber;
+							
+							var childElement = document.getElementById( clickedId );
+							
+							var subjectInput = document.createElement( "td" );
+							subjectInput.id = "subject" + idNumber;
+							subjectInput.innerHTML +=
+									[
+									'<input type="text" id="textSubject" onblur="saveClick(this.id)"/>'
+									].join( "" );
+							document.body.appendChild(subjectInput);
+							document.getElementById( "textSubject" ).value = subjectValue[ idNumber ];
+							
+							childElement.parentNode.replaceChild( subjectInput, childElement );
+							
+							document.getElementById( "textSubject" ).focus();
+						}
+				};
+				
+				var saveClick = function()
+				{
+					if ( document.getElementById( "textSubject" ) === null )
+					{
+						var childElement2 = document.getElementById( "textHomework" ).parentNode;
+						
+						homeworkValue[ idNumber ] = document.getElementById( "textHomework" ).value;
+						window.homeworkValue = homeworkValue;
+						
+						var homeworkSave = document.createElement( "td" );
+						homeworkSave.id = "homework" + idNumber;
+						homeworkSave.innerHTML +=
+								[
+								document.getElementById( "textHomework" ).value
+								].join( "" );
+						document.body.appendChild(homeworkSave);
+						childElement2.parentNode.replaceChild( homeworkSave, childElement2 );
+						
+						var homeworkOnclick = document.getElementById( "homework" + idNumber );
+						var onclickAttribute = document.createAttribute( "onclick" );
+						
+						onclickAttribute.value = "editClick(this.id)";
+						homeworkOnclick.setAttributeNode(onclickAttribute);
+					}
+					
+					else
+					{
+						var childElement = document.getElementById( "textSubject" ).parentNode;
+						
+						subjectValue[ idNumber ] = document.getElementById( "textSubject" ).value;
+						window.subjectValue = subjectValue;
+						
+						var subjectSave = document.createElement( "td" );
+						subjectSave.id = "subject" + idNumber;
+						subjectSave.innerHTML +=
+								[
+								document.getElementById( "textSubject" ).value
+								].join( "" );
+						document.body.appendChild(subjectSave);
+						childElement.parentNode.replaceChild( subjectSave, childElement );
+						
+						var subjectOnclick = document.getElementById( "subject" + idNumber );
+						onclickAttribute = document.createAttribute( "onclick" );
+						
+						onclickAttribute.value = "editClick(this.id)";
+						subjectOnclick.setAttributeNode(onclickAttribute);
+					}
+				};
+		</script>
+		
+	</body>
+	
+</html>
