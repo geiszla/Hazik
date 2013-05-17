@@ -25,10 +25,16 @@
 	<body onload="onloadFunction()">
 		<table id="table1">
 		<tr>
-		<td>Tantárgy</td>	<td>Házi</td>	<td>Határidő</td>
+		<td>Tantárgy</td>	<td>Házi</td>	<td>Határidő</td>	<td>Prioritás</td>
 		</tr>
 		<tr>
-		<td><input id="text1" type="text" /></td>	<td><input id="text2" type="text" /></td>	<td><input id="addDeadline" type="date" /></td>	<td><input id="addButton" value="Hozzáadás" type="submit" onclick="addClick()" /></td>
+		<td><input id="text1" type="text" /></td>	<td><input id="text2" type="text" /></td>	<td><input id="addDeadline" type="date" /> </td>	
+		<td><select id="addPrior">
+			<option>Alacsony</option>
+			<option>Közepes</option>
+			<option>Magas</option>
+		</select></td>
+		</td>	<td><input id="addButton" value="Hozzáadás" type="submit" onclick="addClick()" /></td>
 		</tr>
 		</table>
 		
@@ -41,12 +47,23 @@
 		<div id="homeworkSort" onclick="sortByHomework(this.id)" style="cursor:pointer; width:30px; margin:auto;"><b>Házi</b></div>
 		</td>
 		<td>
-		<div id="deadlineHead" onclick="sortByDeadline(this.id)" style="cursor:pointer; width:60px; margin:auto;"><b>Határidő</b></div>
+		<div id="deadlineSort" onclick="sortByDeadline(this.id)" style="cursor:pointer; width:60px; margin:auto;"><b>Határidő</b></div>
+		</td>
+		<td>
+		<div id="doneSort" onclick="sortByDone(this.id)" style="cursor:pointer; width:34px; margin:auto;"><b>Kész</b></div>
 		</td>
 		</tr>
 		</table>
 		
 		<script>
+				var makeColor = function( id, color )
+				{
+					var trStyle = document.getElementById( id );
+					var styleAttribute = document.createAttribute( "style" );
+					styleAttribute.value = "color:" + color + ";";
+					trStyle.setAttributeNode( styleAttribute );
+				};
+				
 				var makeTwoDigit = function(input)
 				{
 					if( input < 10 )
@@ -58,15 +75,15 @@
 					{
 						return input;
 					}
-				}
+				};
 					
 				var onloadFunction = function()
 				{
-					var currentDate = new Date();
+					var newDate = new Date();
 					 
-					var year = currentDate.getFullYear();
-					var month = makeTwoDigit( currentDate.getMonth() + 1 );
-					var day = makeTwoDigit( currentDate.getDate() );
+					var year = newDate.getFullYear();
+					var month = makeTwoDigit( newDate.getMonth() + 1 );
+					var day = makeTwoDigit( newDate.getDate() );
 					 
 					var currentDate = year + "-" + month + "-" + day;
 					window.currentDate = currentDate;
@@ -121,31 +138,81 @@
 									document.getElementById( "addDeadline" ).value.replace( /\-/g, "." ) + ".",
 									'</td>',
 									'<td>',
+									'<input type="checkbox" onclick="doneClick(this.id)" id="done" />',
+									'</td>',
+									'<td>',
 									'<input type="button" value="Törlés" onclick="deleteClick(this.id)" id="deleteButton" />',
 									'</td>',
 									'</tr>'
 									].join( "" );
 								document.body.appendChild(homeworkTable);
 								
+								if ( document.getElementById( "addPrior" ).value === "Közepes" )
+								{
+									makeColor( "tr", "orange" );
+								}
+								
+								else if ( document.getElementById( "addPrior" ).value === "Magas" )
+								{
+									makeColor( "tr", "red" );
+								}
+								
 								document.getElementById( "tr" ).id += addWhileId;
 								document.getElementById( "deleteButton" ).id += addWhileId;
 								document.getElementById( "subject" ).id += addWhileId;
 								document.getElementById( "homework" ).id += addWhileId;
 								document.getElementById( "deadline" ).id += addWhileId;
+								document.getElementById( "done" ).id += addWhileId;
 								
 								valuesArray[ addWhileId ] = [];
 								
 								valuesArray[ addWhileId ][ 1 ] = document.getElementById( "text1" ).value;
 								valuesArray[ addWhileId ][ 2 ] = document.getElementById( "text2" ).value;
 								valuesArray[ addWhileId ][ 3 ] = document.getElementById( "addDeadline" ).value;
+								valuesArray[ addWhileId ][ 5 ] = document.getElementById( "addPrior" ).value;
+								
+								for ( var i = 1; i < addWhileId; i++ )
+								{
+									if ( valuesArray[ i ][ 4 ] === true )
+									{
+										document.getElementById( "done" + i ).checked = "true";
+									}
+								}
 								
 								document.getElementById( "text1" ).value = "";
 								document.getElementById( "text2" ).value = "";
 								document.getElementById( "addDeadline" ).value = currentDate;
+								document.getElementById( "addPrior" ).value = "Alacsony";
 								
 								addWhileNotEnd = false;
 							}
 						}
+					}
+				};
+				
+				var doneClick = function( clickedId )
+				{
+					var doneId = document.getElementById( clickedId ).id.replace( "done", "" );
+					
+					if ( document.getElementById( clickedId ).checked === true )
+					{
+						makeColor( "tr" + doneId, "#C8C8C8" );
+						valuesArray[ doneId ][ 4 ] = document.getElementById( "done" + doneId ).checked;
+					}
+					
+					else if ( valuesArray[ doneId ][ 5 ] === "Közepes" )
+					{
+						makeColor( "tr" + doneId, "orange" );
+					}
+					
+					else if ( valuesArray[ doneId ][ 5 ] === "Magas" )
+					{
+						makeColor( "tr" + doneId, "red" );
+					}
+					
+					else
+					{
+						makeColor( "tr" + doneId, "#000000" );
 					}
 				};
 				
