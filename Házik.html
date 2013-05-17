@@ -44,9 +44,15 @@
 		
 		<table id="table2">
 		<tr>
-		<td>Tantárgy</td>
-		<td>Házi</td>
-		<td>Törlés</td>
+		<td>
+		<div id="subjectSort" onclick="sortBySubject(this.id)" style="cursor:pointer; width:55px; margin:auto;">Tantárgy</div>
+		</td>
+		<td>
+		<div id="homeworkSort" style="width:30px;" margin:auto;">Házi</div>
+		</td>
+		<td>
+		<div width:40px; margin:auto;">Törlés</div>
+		</td>
 		</tr>
 		</table>
 		
@@ -124,12 +130,35 @@
 				
 				var deleteClick = function( clickedId )
 				{
-					var deleteQuestion = confirm( "Biztos, hogy törölni akarod?" );
+					var deleteQuestion = confirm( "Biztosan törlöd?" );
 					
 					if ( deleteQuestion === true )
 					{
 						var parentElement = document.getElementById( clickedId ).parentNode.parentNode;
 						parentElement.parentNode.removeChild( parentElement );
+						
+						var trTagsArray = document.getElementsByTagName( "tr" );
+						
+						var notEnd = true;
+						var whileId = 0;
+						
+						for (var i = 0; i < trTagsArray.length - 3; i++ )
+						{
+							whileId = whileId + 1;
+							whileIdPlusOne = whileId + 1;
+							
+							if( document.getElementById( "deleteButton" + whileId ) === null )
+							{
+								document.getElementById( "deleteButton" + whileIdPlusOne ).id = "deleteButton" + whileId;
+								document.getElementById( "subject" + whileIdPlusOne ).id = "subject" + whileId;
+								document.getElementById( "homework" + whileIdPlusOne ).id = "homework" + whileId;
+							}
+							
+							else
+							{
+								notEnd = false;
+							}
+						}
 					}
 					
 				};
@@ -225,6 +254,78 @@
 						
 						onclickAttribute.value = "editClick(this.id)";
 						subjectOnclick.setAttributeNode(onclickAttribute);
+					}
+				};
+				
+				var sortBySubject = function()
+				{
+					var getTd = document.getElementsByTagName( "td" );
+					var subjectTdArray = new Array();
+					var getHomeworkBySubject = new Array();
+					var idNumber = new Array();
+					var subjectTdArrayId = -1;
+					
+					for ( var i = 8; i < getTd.length - 1; i++ )
+					{
+						if ( i % 3 === 2 )
+						{
+							subjectTdArrayId = subjectTdArrayId + 1;
+							subjectTdArray[ subjectTdArrayId ] = getTd[ i ].innerHTML;
+							
+							
+						}
+						
+						else if ( i % 3 === 0 )
+						{
+							getHomeworkBySubject[ subjectTdArrayId ] = getTd[ i ].innerHTML;
+						}
+					}
+					
+					var getHomework = new Array();
+					
+					for ( l = 0; l < subjectTdArray.length; l++ )
+					{
+						getHomework[ l ] = subjectTdArray [ l ];
+					}
+					
+					subjectTdArray.sort();
+
+					for ( var j = 0; j < subjectTdArray.length ; j++ )
+					{
+						document.getElementById( "subject" + ( j + 1 ) ).innerHTML = subjectTdArray[ j ];
+					}
+					
+					getTd = document.getElementsByTagName( "td" );
+					var notEnd = true;
+					var whileId = -1;
+					var whileId2 = 0;
+					
+					for ( var k = 8; k < getTd.length; k++ )
+					{
+						notEnd = true;
+						
+						while ( notEnd === true )
+						{
+							if ( k % 3 === 2 )
+							{
+								whileId = whileId + 1;
+								
+								if ( getTd[ k ].innerHTML === getHomework[ whileId ] )
+								{
+									whileId2 = whileId2 + 1;
+									
+									document.getElementById( "homework" + ( whileId2 ) ).innerHTML = getHomeworkBySubject[ whileId ];
+
+									whileId = -1;
+									notEnd = false;
+								}
+							}
+							
+							else
+							{
+								notEnd = false;
+							}
+						}
 					}
 				};
 		</script>
