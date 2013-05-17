@@ -25,20 +25,10 @@
 	<body>
 		<table id="table1">
 		<tr>
-		<td>Tantárgy</td>
-		<td>Házi</td>
+		<td>Tantárgy</td>	<td>Házi</td>
 		</tr>
 		<tr>
-		<td>
-		<input id="text1" type="text" />
-		</td>
-		<td>
-		<input id="text2" type="text" />
-		</td>
-		<td>
-		<input id="addButton" value="Hozzáadás" type="submit" onclick="addClick()" 
-		/>
-		</td>
+		<td><input id="text1" type="text" autofocus="on" /></td>	<td><input id="text2" type="text" /></td>	<td><input id="addButton" value="Hozzáadás" type="submit" onclick="addClick()" /></td>
 		</tr>
 		</table>
 		
@@ -51,7 +41,7 @@
 		<div id="homeworkSort" onclick="sortByHomework(this.id)" style="cursor:pointer; width:30px; margin:auto;"><b>Házi</b></div>
 		</td>
 		<td>
-		<div width:40px; margin:auto;"></div>
+		<div style="width:40px; margin:auto;"></div>
 		</td>
 		</tr>
 		</table>
@@ -252,18 +242,27 @@
 					}
 				};
 				
-				var sortFunction = function( tdSortByNumber, sortByColumnName, dataColumnName )
+				var sortFunction = function( tdSortByNumber1, tdSortByNumber2, sortByColumnName, dataColumnName )
 				{
 					var tdTags = document.getElementsByTagName( "td" );
 					var subjectValues = new Array();
-					var sortId = -1;
+					var homeworkValuesInDefaultSequence = new Array();
+					window.homeworkValuesInDefaultSequence = homeworkValuesInDefaultSequence;
+					var sortSubjectId = -1;
+					var sortHomeworkId = -1;
 					
 					for ( var i = 8; i < tdTags.length - 1; i++ )
 					{
-						if ( i % 3 === tdSortByNumber )
+						if ( i % 3 === tdSortByNumber1 )
 						{
-							sortId = sortId + 1;
-							subjectValues[ sortId ] = tdTags[ i ].innerHTML;
+							sortSubjectId = sortSubjectId + 1;
+							subjectValues[ sortSubjectId ] = tdTags[ i ].innerHTML;
+						}
+						
+						else if ( i % 3 === tdSortByNumber2 )
+						{
+							sortHomeworkId = sortHomeworkId + 1;
+							homeworkValuesInDefaultSequence[ sortHomeworkId ] = tdTags[ i ].innerHTML;
 						}
 					}
 					
@@ -274,11 +273,11 @@
 						subjectValuesInDefaultSequence[ l ] = subjectValues [ l ];
 					}
 					
-					window.subjectValuesInDefaultSequence = subjectValuesInDefaultSequence
+					window.subjectValuesInDefaultSequence = subjectValuesInDefaultSequence;
 					
 					subjectValues.sort();
 
-					for ( var j = 0; j < subjectValues.length ; j++ )
+					for ( var j = 0; j < subjectValues.length; j++ )
 					{
 						document.getElementById( sortByColumnName + ( j + 1 ) ).innerHTML = subjectValues[ j ];
 					}
@@ -291,7 +290,7 @@
 				
 				var sortBySubject = function()
 				{
-					sortFunction( 2, "subject", "homework" )
+					sortFunction( 2, 0, "subject", "homework" );
 					
 					tdTags = document.getElementsByTagName( "td" );
 					var sortWhileNotEnd = true;
@@ -312,7 +311,7 @@
 								{
 									sortWhileId2 = sortWhileId2 + 1;
 									
-									document.getElementById( "homework" + ( sortWhileId2 ) ).innerHTML = subjectValuesInDefaultSequence[ sortWhileId ];
+									document.getElementById( "homework" + ( sortWhileId2 ) ).innerHTML = homeworkValuesInDefaultSequence[ sortWhileId ];
 									
 									subjectValuesInDefaultSequence[ sortWhileId ] = null;
 									sortWhileId = -1;
@@ -320,8 +319,6 @@
 									
 									homeworkValue[sortWhileId2] = document.getElementById( "homework" + ( sortWhileId2 ) ).innerHTML;
 									subjectValue[sortWhileId2] = document.getElementById( "subject" + ( sortWhileId2 ) ).innerHTML;
-									
-									alert( homeworkValue[sortWhileId2] );
 								}
 							}
 								
@@ -335,14 +332,14 @@
 				
 				var sortByHomework = function()
 				{
-					sortFunction( 0, "homework", "subject" )
+					sortFunction( 0, 2, "homework", "subject" );
 					
 					tdTags = document.getElementsByTagName( "td" );
 					var sortWhileNotEnd = true;
 					var sortWhileId = -1;
 					var sortWhileId2 = 0;
 					
-					for ( var k = 8; k < tdTags.length; k++ )
+					for ( var k = 7; k < tdTags.length; k++ )
 					{
 						sortWhileNotEnd = true;
 					
@@ -356,10 +353,9 @@
 								{
 									sortWhileId2 = sortWhileId2 + 1;
 									
-									document.getElementById( "subject" + ( sortWhileId2 ) ).innerHTML = subjectValuesInDefaultSequence[ sortWhileId ];
+									document.getElementById( "subject" + ( sortWhileId2 ) ).innerHTML = homeworkValuesInDefaultSequence[ sortWhileId ];
 									
 									subjectValuesInDefaultSequence[ sortWhileId ] = null;
-
 									sortWhileId = -1;
 									sortWhileNotEnd = false;
 									
