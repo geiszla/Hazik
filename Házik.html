@@ -390,16 +390,6 @@
 					
 					sortFunction( sortArray );
 					
-					for ( var j = 1; j <= addWhileId; j++ )
-					{
-						valuesArray[ j ][ 1 ] = sortArray[ j - 1 ];
-					}
-					
-					for ( var k = 1; k <= addWhileId; k++ )
-					{
-						document.getElementById( "subject" + k ).innerHTML = sortArray[ k - 1 ];
-					}
-					
 					var changedIds = [];
 
 					for ( var l = 1; l <= addWhileId; l++ )
@@ -412,20 +402,29 @@
 							}
 						}
 					}
+					
+					var tempArray = [];
 
 					for ( var n = 1; n < valuesArray[ 1 ].length; n++ )
 					{
-						var tempArray = [];
+						tempArray = [];
 						
 						for ( var o = 1; o <= addWhileId; o++ )
 						{
 							tempArray[ changedIds[ o ] ] = valuesArray[ o ][ n ];
 						}
 						
-						for ( var p = 1; p <= tempArray.length; n++ )
+						for ( var p = 1; p <= tempArray.length; p++ )
 						{
-							valuesArray[ p ][ n ] = tempArray[ p ];
+							valuesArray[ p ][ n ] = tempArray[ p - 1 ];
 						}
+					}
+					
+					for ( var k = 1; k <= 3; k++ )
+					{
+						document.getElementById( "subject" + k ).innerHTML = valuesArray[ k ][ 1 ];
+						document.getElementById( "homework" + k ).innerHTML = valuesArray[ k ][ 2 ];
+						document.getElementById( "deadline" + k ).innerHTML = valuesArray[ k ][ 3 ].replace( /\-/g, "." ) + ".";
 					}
 				}
 				
@@ -459,8 +458,6 @@
 							var tempString = sortArray[ whileId ];
 							sortArray[ whileId ] = sortArray[ whileId + 1 ];
 							sortArray[ whileId + 1 ] = tempString;
-							
-							console.log( sortArray );
 						}
 						
 						whileId++;
