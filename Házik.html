@@ -48,7 +48,7 @@
 		<div id="subjectSort" onclick="sortBySubject(this.id)" style="cursor:pointer; width:55px; margin:auto;">Tantárgy</div>
 		</td>
 		<td>
-		<div id="homeworkSort" style="width:30px;" margin:auto;">Házi</div>
+		<div id="homeworkSort" onclick="sortByHomework(this.id)" style="cursor:pointer; width:30px; margin:auto;">Házi</div>
 		</td>
 		<td>
 		<div width:40px; margin:auto;">Törlés</div>
@@ -271,8 +271,6 @@
 						{
 							subjectTdArrayId = subjectTdArrayId + 1;
 							subjectTdArray[ subjectTdArrayId ] = getTd[ i ].innerHTML;
-							
-							
 						}
 						
 						else if ( i % 3 === 0 )
@@ -315,6 +313,8 @@
 									whileId2 = whileId2 + 1;
 									
 									document.getElementById( "homework" + ( whileId2 ) ).innerHTML = getHomeworkBySubject[ whileId ];
+									
+									getHomework[ whileId ] = null;
 
 									whileId = -1;
 									notEnd = false;
