@@ -82,12 +82,48 @@
 					document.getElementById( "addDeadline" ).value = currentDate;
 				}
 				
-				function makeColor( id, color )
+				function makeColor()
 				{
-					var trStyle = document.getElementById( id );
-					var styleAttribute = document.createAttribute( "style" );
-					styleAttribute.value = "color:" + color + ";";
-					trStyle.setAttributeNode( styleAttribute );
+					for ( var i = 1; i < valuesArray.length; i++ )
+					{
+						if ( valuesArray[ i ][ 4 ] === true )
+						{
+							document.getElementById( "done" + i ).checked = "true";
+							var trStyle = document.getElementById( "tr" + i );
+							var styleAttribute = document.createAttribute( "style" );
+							styleAttribute.value = "color:#C0C0C0;";
+							trStyle.setAttributeNode( styleAttribute );
+						}
+						
+						else if ( valuesArray[ i ][ 4 ] === undefined || valuesArray[ i ][ 4 ] === false )
+						{
+							document.getElementById( "done" + i ).checked = false;
+							
+							if ( valuesArray[ i ][ 5 ] === "Alacsony" )
+							{
+								var trStyle = document.getElementById( "tr" + i );
+								var styleAttribute = document.createAttribute( "style" );
+								styleAttribute.value = "color:black;";
+								trStyle.setAttributeNode( styleAttribute );
+							}
+							
+							else if ( valuesArray[ i ][ 5 ] === "Közepes" )
+							{
+								var trStyle = document.getElementById( "tr" + i );
+								var styleAttribute = document.createAttribute( "style" );
+								styleAttribute.value = "color:orange;";
+								trStyle.setAttributeNode( styleAttribute );
+							}
+							
+							else if ( valuesArray[ i ][ 5 ] === "Magas" )
+							{
+								var trStyle = document.getElementById( "tr" + i );
+								var styleAttribute = document.createAttribute( "style" );
+								styleAttribute.value = "color:red; font-weight:bold";
+								trStyle.setAttributeNode( styleAttribute );
+							}
+						}
+					}
 				}
 				
 				var valuesArray = [];
@@ -149,16 +185,6 @@
 									].join( "" );
 								document.body.appendChild(homeworkTable);
 								
-								if ( document.getElementById( "addPrior" ).value === "Közepes" )
-								{
-									makeColor( "tr", "orange" );
-								}
-								
-								else if ( document.getElementById( "addPrior" ).value === "Magas" )
-								{
-									makeColor( "tr", "red" );
-								}
-								
 								document.getElementById( "tr" ).id += addWhileId;
 								document.getElementById( "deleteButton" ).id += addWhileId;
 								document.getElementById( "subject" ).id += addWhileId;
@@ -173,18 +199,12 @@
 								valuesArray[ addWhileId ][ 3 ] = document.getElementById( "addDeadline" ).value;
 								valuesArray[ addWhileId ][ 5 ] = document.getElementById( "addPrior" ).value;
 								
-								for ( var i = 1; i <= addWhileId; i++ )
-								{
-									if ( valuesArray[ i ][ 4 ] === true )
-									{
-										document.getElementById( "done" + i ).checked = "true";
-									}
-								}
-								
 								document.getElementById( "text1" ).value = "";
 								document.getElementById( "text2" ).value = "";
 								document.getElementById( "addDeadline" ).value = currentDate;
 								document.getElementById( "addPrior" ).value = "Alacsony";
+								
+								makeColor();
 								
 								addWhileNotEnd = false;
 							}
@@ -195,27 +215,9 @@
 				function doneClick( clickedId )
 				{
 					var doneId = document.getElementById( clickedId ).id.replace( "done", "" );
+					valuesArray[ doneId ][ 4 ] = document.getElementById( "done" + doneId ).checked;
 					
-					if ( document.getElementById( clickedId ).checked === true )
-					{
-						makeColor( "tr" + doneId, "#C8C8C8" );
-						valuesArray[ doneId ][ 4 ] = document.getElementById( "done" + doneId ).checked;
-					}
-					
-					else if ( valuesArray[ doneId ][ 5 ] === "Közepes" )
-					{
-						makeColor( "tr" + doneId, "orange" );
-					}
-					
-					else if ( valuesArray[ doneId ][ 5 ] === "Magas" )
-					{
-						makeColor( "tr" + doneId, "red" );
-					}
-					
-					else
-					{
-						makeColor( "tr" + doneId, "#000000" );
-					}
+					makeColor();
 				}
 				
 				function deleteClick( clickedId )
@@ -420,12 +422,14 @@
 						}
 					}
 					
-					for ( var k = 1; k <= 3; k++ )
+					for ( var k = 1; k < valuesArray.length; k++ )
 					{
 						document.getElementById( "subject" + k ).innerHTML = valuesArray[ k ][ 1 ];
 						document.getElementById( "homework" + k ).innerHTML = valuesArray[ k ][ 2 ];
 						document.getElementById( "deadline" + k ).innerHTML = valuesArray[ k ][ 3 ].replace( /\-/g, "." ) + ".";
 					}
+					
+					makeColor();
 				}
 				
 				function sortFunction( sortArray )
@@ -436,8 +440,6 @@
 					
 					while ( notEnd )
 					{
-						swapNumber = 0;
-						
 						if ( sortArray[ whileId + 1 ] === undefined )
 						{
 							if ( swapNumber === 0 )
@@ -447,7 +449,8 @@
 							
 							else
 							{
-								whileId = 0;
+								whileId = -1;
+								swapNumber = 0;
 							}
 						}
 
