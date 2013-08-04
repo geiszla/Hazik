@@ -41,16 +41,16 @@
 		<table id="table2">
 		<tr>
 		<td>
-		<div id="subjectSort" onclick="sortBySubject(this.id)" style="cursor:pointer; width:61px; margin:auto;"><b>Tantárgy</b></div>
+		<div id="subjectSort" onclick="sortFunction( 1 )" style="cursor:pointer; width:61px; margin:auto;"><b>Tantárgy</b></div>
 		</td>
 		<td>
-		<div id="homeworkSort" onclick="sortByHomework(this.id)" style="cursor:pointer; width:30px; margin:auto;"><b>Házi</b></div>
+		<div id="homeworkSort" onclick="sortFunction( 2 )" style="cursor:pointer; width:30px; margin:auto;"><b>Házi</b></div>
 		</td>
 		<td>
-		<div id="deadlineSort" onclick="sortByDeadline(this.id)" style="cursor:pointer; width:60px; margin:auto;"><b>Határidő</b></div>
+		<div id="deadlineSort" onclick="sortFunction( 3 )" style="cursor:pointer; width:60px; margin:auto;"><b>Határidő</b></div>
 		</td>
 		<td>
-		<div id="doneSort" onclick="sortByDone(this.id)" style="cursor:pointer; width:34px; margin:auto;"><b>Kész</b></div>
+		<div id="doneSort" onclick="sortFunction( 4 )" style="cursor:pointer; width:34px; margin:auto;"><b>Kész</b></div>
 		</td>
 		</tr>
 		</table>
@@ -95,7 +95,7 @@
 							trStyle.setAttributeNode( styleAttribute );
 						}
 						
-						else if ( valuesArray[ i ][ 4 ] === undefined || valuesArray[ i ][ 4 ] === false )
+						else if ( valuesArray[ i ][ 4 ] === false )
 						{
 							document.getElementById( "done" + i ).checked = false;
 							
@@ -197,6 +197,7 @@
 								valuesArray[ addWhileId ][ 1 ] = document.getElementById( "text1" ).value;
 								valuesArray[ addWhileId ][ 2 ] = document.getElementById( "text2" ).value;
 								valuesArray[ addWhileId ][ 3 ] = document.getElementById( "addDeadline" ).value;
+								valuesArray[ addWhileId ][ 4 ] = document.getElementById( "done" + addWhileId ).checked;
 								valuesArray[ addWhileId ][ 5 ] = document.getElementById( "addPrior" ).value;
 								
 								document.getElementById( "text1" ).value = "";
@@ -381,59 +382,16 @@
 					}
 				}
 				
-				function sortBySubject()
+				function sortFunction( columnNumber )
 				{
 					var sortArray = [];
 					
 					for ( var i = 1; i <= addWhileId; i++ )
 					{
-						sortArray[ i - 1 ] = valuesArray[ i ][ 1 ];
+						sortArray[ i - 1 ] = valuesArray[ i ][ columnNumber ];
 					}
 					
-					sortFunction( sortArray );
-					
-					var changedIds = [];
-
-					for ( var l = 1; l <= addWhileId; l++ )
-					{
-						for ( var m = 0; m < sortArray.length; m++ )
-						{
-							if ( sortArray[ m ] === valuesArray[ l ][ 1 ] )
-							{
-								changedIds[ l ] = m;
-							}
-						}
-					}
-					
-					var tempArray = [];
-
-					for ( var n = 1; n < valuesArray[ 1 ].length; n++ )
-					{
-						tempArray = [];
-						
-						for ( var o = 1; o <= addWhileId; o++ )
-						{
-							tempArray[ changedIds[ o ] ] = valuesArray[ o ][ n ];
-						}
-						
-						for ( var p = 1; p <= tempArray.length; p++ )
-						{
-							valuesArray[ p ][ n ] = tempArray[ p - 1 ];
-						}
-					}
-					
-					for ( var k = 1; k < valuesArray.length; k++ )
-					{
-						document.getElementById( "subject" + k ).innerHTML = valuesArray[ k ][ 1 ];
-						document.getElementById( "homework" + k ).innerHTML = valuesArray[ k ][ 2 ];
-						document.getElementById( "deadline" + k ).innerHTML = valuesArray[ k ][ 3 ].replace( /\-/g, "." ) + ".";
-					}
-					
-					makeColor();
-				}
-				
-				function sortFunction( sortArray )
-				{
+					/* SORBARAKÁS */
 					var notEnd = true;
 					var whileId = 0;
 					var swapNumber = 0;
@@ -454,7 +412,7 @@
 							}
 						}
 
-						else if ( sortArray[ whileId ].localeCompare( sortArray[ whileId + 1 ] ) > 0 )
+						else if ( String( sortArray[ whileId ] ).localeCompare( String( sortArray[ whileId + 1 ] ) ) > 0 )
 						{
 							swapNumber++;
 							
@@ -465,8 +423,74 @@
 						
 						whileId++;
 					}
-				/*jslint browser: true, couch: false, devel: true, node: false, rhino: false, windows: false, passfail: false, ass: false, bitwise: false, closure: false, continue: false, debug: false, eqeq: false, es5: false, evil: false, forin: false, newcap: false, nomen: false, plusplus: true, regexp: false, unparam: false, sloppy: true, stupid: false, sub: false, todo: false, vars: true, white: true */
+
+					/* SORBARAKÁS VÉGE */
+					
+					/* VÁLTOZÁSOK KÖVETÉSE */
+					var changedIds = [];
+
+					for ( var l = 1; l <= addWhileId; l++ )
+					{
+						for ( var m = 0; m < sortArray.length; m++ )
+						{
+							if ( sortArray[ m ] === valuesArray[ l ][ columnNumber ] )
+							{
+								var notEnd = true;
+							
+								while ( notEnd )
+								{
+									for ( var q = 0; q <= changedIds.length; q++ )
+									{
+										if ( changedIds[ q ] === m )
+										{
+											for ( var r = 0; r < changedIds.length; r++ )
+											{
+												if ( changedIds[ r ] > m )
+												{
+													changedIds[ r ]++;
+												}
+											}
+											
+											m++;
+										}
+									}
+
+									changedIds[ l - 1 ] = m;
+									notEnd = false;
+								}
+							}
+						}
+					}
+					/* VÁLTOZÁSOK KÖVETÉSÉNEK VÉGE */
+					
+					var tempArray = [];
+
+					for ( var n = 1; n < valuesArray[ 1 ].length; n++ )
+					{
+						tempArray = [];
+						
+						for ( var o = 0; o < addWhileId; o++ )
+						{
+							tempArray[ changedIds[ o ] ] = valuesArray[ o + 1 ][ n ];
+						}
+						
+						for ( var p = 1; p <= tempArray.length; p++ )
+						{
+							valuesArray[ p ][ n ] = tempArray[ p - 1 ];
+						}
+					}
+					
+					for ( var k = 1; k <= addWhileId; k++ )
+					{
+						document.getElementById( "subject" + k ).innerHTML = valuesArray[ k ][ 1 ];
+						document.getElementById( "homework" + k ).innerHTML = valuesArray[ k ][ 2 ];
+						document.getElementById( "deadline" + k ).innerHTML = valuesArray[ k ][ 3 ].replace( /\-/g, "." ) + ".";
+					}
+					
+					makeColor();
 				}
+					
+				/*jslint browser: true, couch: false, devel: true, node: false, rhino: false, windows: false, passfail: false, ass: false, bitwise: false, closure: false, continue: false, debug: false, eqeq: false, es5: false, evil: false, forin: false, newcap: false, nomen: false, plusplus: true, regexp: false, unparam: false, sloppy: true, stupid: false, sub: false, todo: false, vars: true, white: true */
 		</script>
 		
 	</body>
