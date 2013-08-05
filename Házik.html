@@ -243,12 +243,19 @@
 								document.getElementById( "subject" + ( deleteId + 1) ).id = "subject" + deleteId;
 								document.getElementById( "homework" + ( deleteId + 1) ).id = "homework" + deleteId;
 								document.getElementById( "deadline" + ( deleteId + 1) ).id = "deadline" + deleteId;
-								
-								valuesArray[deleteId][ 1 ] = valuesArray[deleteId + 1 ][ 1 ];
-								valuesArray[deleteId][ 2 ] = valuesArray[deleteId + 1 ][ 2 ];
-								valuesArray[deleteId][ 3 ] = valuesArray[deleteId + 1 ][ 3 ];
+								document.getElementById( "done" + ( deleteId + 1) ).id = "done" + deleteId;
+								document.getElementById( "tr" + ( deleteId + 1) ).id = "tr" + deleteId;
+
+								for (var j = 1; j < valuesArray[deleteId].length; j++)
+								{
+									alert(valuesArray[deleteId]);
+									valuesArray[deleteId][ j ] = valuesArray[deleteId + 1 ][ j ];
+								}
 							}
 						}
+
+						valuesArray.splice(valuesArray.length - 1, valuesArray.length);
+						addWhileId--;
 					}
 				}
 				
@@ -461,8 +468,6 @@
 							}
 						}
 					}
-
-					console.log(changedIds);
 
 					/* VÁLTOZÁSOK KÖVETÉSÉNEK VÉGE */
 					
