@@ -423,7 +423,6 @@
 						
 						whileId++;
 					}
-
 					/* SORBARAKÁS VÉGE */
 					
 					/* VÁLTOZÁSOK KÖVETÉSE */
@@ -435,32 +434,36 @@
 						{
 							if ( sortArray[ m ] === valuesArray[ l ][ columnNumber ] )
 							{
-								var notEnd = true;
-							
-								while ( notEnd )
-								{
-									for ( var q = 0; q <= changedIds.length; q++ )
-									{
-										if ( changedIds[ q ] === m )
-										{
-											for ( var r = 0; r < changedIds.length; r++ )
-											{
-												if ( changedIds[ r ] > m )
-												{
-													changedIds[ r ]++;
-												}
-											}
-											
-											m++;
-										}
-									}
+								changedIds[ l - 1 ] = m;
+							}
+						}
+					}
 
-									changedIds[ l - 1 ] = m;
-									notEnd = false;
+					var isNotChanged = true;
+
+					for (var i = 0; i < changedIds.length; i++)
+					{
+						isNotChanged = true;
+
+						while (isNotChanged)
+						{
+							for (var j = 0; j < changedIds.length; j++)
+							{
+								if(changedIds[i] === changedIds[j] && j !== i)
+								{
+									changedIds[j]--;
+								}
+
+								else
+								{
+									isNotChanged = false;
 								}
 							}
 						}
 					}
+
+					console.log(changedIds);
+
 					/* VÁLTOZÁSOK KÖVETÉSÉNEK VÉGE */
 					
 					var tempArray = [];
